@@ -1,0 +1,83 @@
+version: '3.5'
+services:
+  doa-js:
+    build: ./node
+    image: "jose122946/node"
+    isolation: 'process'
+    command: ["powershell", "-Command", "lite-server", "--baseDir=dist"]
+    restart: always
+    volumes:
+      - "../../doa-js:c:/doa-js"
+    networks:
+      docker-network:
+        ipv4_address: 172.20.0.110
+
+  api:
+    build: ./php8
+    image: jose122946/php8.1
+    restart: always
+#    command:
+#      - C:\RunHiddenConsole.exe C:\php\php-cgi.exe -b 127.0.0.1:9123
+    isolation: 'process'
+    environment:
+      APPLICATION_ENV: local
+    volumes:
+      - "../../api/:c:/Apache24/htdocs"
+    networks:
+      docker-network:
+        ipv4_address: 172.20.0.106
+    extra_hosts:
+      - "api.local.com:172.20.0.106"
+
+  php71:
+    build: ./php7.1
+    image: jose122946/php7.1
+    restart: always
+    isolation: 'process'
+    depends_on:
+      - api
+    environment:
+      APPLICATION_ENV: local
+      db: 172.20.0.103
+      DB_HOST: 172.20.0.103
+    volumes:
+      - "../../php71/:c:/Apache24/htdocs"
+    networks:
+      docker-network:
+        ipv4_address: 172.20.0.102
+    extra_hosts:
+      - "doajs.local.com:172.20.0.110"
+
+  db:
+    build: ./mysql
+    image: jose122946/mysql
+    volumes:
+    - "./data:c:/mysql-5.6.29-winx64/data"
+    ports:
+    - "3306:3306"
+    restart: always
+    isolation: 'process'
+    environment:
+      MYSQL_ROOT_PASSWORD: Letme1n
+      APPLICATION_ENV: local
+    networks:
+      docker-network:
+        ipv4_address: 172.20.0.103
+    extra_hosts:
+      - "api.local.com:172.20.0.106"
+      - "elasticsearch:172.20.0.117"
+
+ cache:
+   build: ./memcached
+   image: jose122946/memcached
+   restart: always
+   isolation: 'process'
+   networks:
+     intake:
+       ipv4_address: 172.20.0.101
+networks:
+  docker-network:
+    driver: nat
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
