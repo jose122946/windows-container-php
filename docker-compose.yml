@@ -48,24 +48,24 @@ services:
     extra_hosts:
       - "doajs.local.com:172.20.0.110"
 
-  db:
-    build: ./mysql
-    image: jose122946/mysql
-    volumes:
-    - "./data:c:/mysql-5.6.29-winx64/data"
-    ports:
-    - "3306:3306"
-    restart: always
-    isolation: 'process'
-    environment:
-      MYSQL_ROOT_PASSWORD: Letme1n
-      APPLICATION_ENV: local
-    networks:
-      docker-network:
-        ipv4_address: 172.20.0.103
-    extra_hosts:
-      - "api.local.com:172.20.0.106"
-      - "elasticsearch:172.20.0.117"
+  # db:
+  #   build: ./mysql
+  #   image: jose122946/mysql
+  #   volumes:
+  #   - "./data:c:/mysql-5.6.29-winx64/data"
+  #   ports:
+  #   - "3306:3306"
+  #   restart: always
+  #   isolation: 'process'
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: Letme1n
+  #     APPLICATION_ENV: local
+  #   networks:
+  #     docker-network:
+  #       ipv4_address: 172.20.0.103
+  #   extra_hosts:
+  #     - "api.local.com:172.20.0.106"
+  #     - "elasticsearch:172.20.0.117"
 
  cache:
    build: ./memcached
